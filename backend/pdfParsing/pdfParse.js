@@ -12,7 +12,7 @@ files.forEach(file => {
     } catch (error) {
         console.log(error);
     }
-    
+
 })
 
 async function parseResults(buffer) {
@@ -27,13 +27,27 @@ async function parseResults(buffer) {
             club: reverseString(rows[i + 3]),
             heat: rows[i + 4][0],
             lane: rows[i + 4][1],
-            time: rows[i + 4].slice(2, 10) || '',
-            internationalScore: rows[i + 4].slice(10) || '0'
+            time: (() => {
+                if (rows[i + 4][2] !== 'D' && rows[i + 4][2] !== 'N') {
+                    return rows[i + 4].slice(2, 10);
+                } else {
+                    return rows[i + 4].slice(2, 4);
+                }
+            })(),
+
+            internationalScore: (() => {
+                if (rows[i + 4][2] !== 'D' && rows[i + 4][2] !== 'N') {
+                    return rows[i + 4].slice(10);
+                } else {
+                    return '0';
+                }
+            }
+            )()
         });
     }
     console.log(parsedResults);
     return parsedResults;
-}  
+}
 
 function reverseString(str) {
     return str.split(' ').reverse().join(' ')
