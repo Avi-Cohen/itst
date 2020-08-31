@@ -19,7 +19,7 @@ This Privacy Notice describes itst.online policies and practices regarding its c
 How we collect and use your personal data
 itst.online collects personal data about the athletes and visitors to this website.
 
-We do not sell personal data to anyone and only share it with third parties who are facilitating the delivery of Swimrankings services.
+We do not sell personal data to anyone and only share it with third parties who are facilitating the delivery of ITST services.
 
 Athletes
 The displayed results and data about athletes is based on information from of the national swimming federations listed at the top of this page.
@@ -27,7 +27,7 @@ The displayed results and data about athletes is based on information from of th
 Personal data about athletes is used to operate our ranking site efficiently and improve our service.
 
 Website Visitors
-The itst.online website collects certain information automatically and stores it in log files. The information may include internet protocol (IP) addresses, the region or general location where your computer or device is accessing the internet, browser type, operating system and other usage information about the use of the itst.online website, including a history of the pages you view. We use this information to help us design our site to better suit our users needs. We may also use your IP address to help diagnose problems with our server and to administer our website, analyze trends, track visitor movements, and gather broad demographic information that assists us in identifying visitor preferences. The itst.online website also uses cookies and web beacons.
+The ITST website collects certain information automatically and stores it in log files. The information may include internet protocol (IP) addresses, the region or general location where your computer or device is accessing the internet, browser type, operating system and other usage information about the use of the ITST website, including a history of the pages you view. We use this information to help us design our site to better suit our users needs. We may also use your IP address to help diagnose problems with our server and to administer our website, analyze trends, track visitor movements, and gather broad demographic information that assists us in identifying visitor preferences. The ITST website also uses cookies and web beacons.
 
 Third party vendors, including Google, use cookies to serve ads based on a user's prior visits to our website. Google's use of the DoubleClick cookie enables it and its partners to serve ads based on your visits to our site and/or other sites on the Internet.
 
@@ -36,10 +36,10 @@ You may opt out of the use of the DoubleClick cookie for interest-based advertis
 Security of your data
 We maintain appropriate security measures to protect your personal data from unlawful or unauthorised processing and accidental loss, destruction or damage.
 
-Please note that, in relation to any personal data you submit to us online, we cannot guarantee the security of data sent to us in this way. Transmission of data over the internet is at your own risk. You are responsible for keeping any passwords you use to access itst.online platform safe.
+Please note that, in relation to any personal data you submit to us online, we cannot guarantee the security of data sent to us in this way. Transmission of data over the internet is at your own risk. You are responsible for keeping any passwords you use to access ITST platform safe.
 
 Data storage and retention
-Your personal data is stored by itst.online on its servers. itst.online retains data for no longer than is necessary for the purposes of the processing.
+Your personal data is stored by ITST on its servers. ITST retains data for no longer than is necessary for the purposes of the processing.
 
 Privacy rights
 You have the right to (subject to certain limitations):
