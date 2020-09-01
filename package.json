@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/Avi-Cohen/itst#readme",
   "dependencies": {
+    "dotenv": "^8.2.0",
     "fs": "0.0.1-security",
     "pdf-parse": "^1.1.1",
     "pdf-parser": "^1.0.5",

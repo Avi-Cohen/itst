@@ -1,6 +1,6 @@
 const fs = require('fs');
 const pdfParse = require('pdf-parse');
-const config = require('../../src/static/config');
+const config = require('./config');
 
 // get all the file names from the allPdfResults folder
 const files = fs.readdirSync(config.pathPdf);
@@ -78,6 +78,7 @@ async function parseResults(buffer,file) {
         
     } catch (err) {
         console.log({ message: err });
+        return swimmersArray, resultsArray
     }
 }
 

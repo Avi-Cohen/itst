@@ -1,4 +1,4 @@
 require('dotenv').config();
 module.exports.config = {
-    pathPdf: process.env.PATH_PDF_FOLDER
+    allPdfResults: process.env.ALL_PDF_RESULTS
 }
