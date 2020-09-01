@@ -1,8 +1,9 @@
 const fs = require('fs');
 const pdfParse = require('pdf-parse');
+const config = require('../../src/static/config');
 
 // get all the file names from the allPdfResults folder
-const files = fs.readdirSync('/Users/avicohen/vs-sandbox/itst/backend/pdfParsing/allPdfResults');
+const files = fs.readdirSync(config.pathPdf);
 
 files.slice(1).forEach(file => {
     let path = __dirname + '/allPdfResults/' + file;
@@ -17,6 +18,7 @@ files.slice(1).forEach(file => {
 
 async function parseResults(buffer,path) {
     try {
+        
         const data = await pdfParse(buffer);
         console.log(path);
         const rows = data.text.split('\n');
