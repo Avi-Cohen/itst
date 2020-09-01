@@ -19,6 +19,8 @@
   "dependencies": {
     "fs": "0.0.1-security",
     "pdf-parse": "^1.1.1",
-    "pdf-parser": "^1.0.5"
+    "pdf-parser": "^1.0.5",
+    "shortid": "^2.2.15",
+    "uuid": "^8.3.0"
   }
 }
