@@ -1,19 +1,20 @@
 const fs = require('fs');
 const pdfParse = require('pdf-parse');
 
-// get all the file names from the allPdfResults folder
-const files = fs.readdirSync('/Users/avicohen/vs-sandbox/itst/backend/pdfParsing/allPdfResults');
 
-files.slice(1).forEach(file => {
-    let path = __dirname + '/allPdfResults/' + file;
-    const dataBuffer = fs.readFileSync(path);
-    try {
-        parseResults(dataBuffer, path);
-    } catch (error) {
-        console.log(error);
-    }
+var getFileNames = (() => {
+    const files = fs.readdirSync('/Users/avicohen/vs-sandbox/itst/backend/pdfParsing/allPdfResults');
+    files.slice(1).forEach(file => {
+        let path = __dirname + '/allPdfResults/' + file;
+        const dataBuffer = fs.readFileSync(path);
+        try {
+            parseResults(dataBuffer, path);
+        } catch (error) {
+            console.log(error);
+        }
+    })
+})();
 
-})
 
 async function parseResults(buffer,path) {
     try {
@@ -22,7 +23,18 @@ async function parseResults(buffer,path) {
         const rows = data.text.split('\n');
         const firstPlaceIndex = rows.findIndex((row, index) => row === '1' && rows[index + 5] === '2') // find the index of the first result
         const parsedResults = [];
+        let previousPosition = 0;
+        let currentPosition = 0;
         for (let i = firstPlaceIndex; i < rows.length; i += 5) {
+            currentPosition = rows[i];
+            if (currentPosition != previousPosition+1){
+                console.log(`current: ${currentPosition} != previous ${previousPosition} +1 is ${currentPosition != previousPosition+1}`)
+                i += 3;
+                previousPosition++;
+                currentPosition = rows[i];
+            } else {
+                previousPosition++;
+            }
             parsedResults.push({
                 name: reverseString(rows[i + 1]),
                 yearOfBirth: rows[i + 2],
