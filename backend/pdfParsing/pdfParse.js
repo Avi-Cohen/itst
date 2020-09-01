@@ -1,6 +1,11 @@
 const fs = require('fs');
 const pdfParse = require('pdf-parse');
+const config = require('../../src/static/config');
+
+// get all the file names from the allPdfResults folder
+const files = fs.readdirSync(config.pathPdf);
 const shortid = require('shortid');
+
 
 
 var getFileNames = (() => {
@@ -19,6 +24,7 @@ var getFileNames = (() => {
 
 async function parseResults(buffer,file) {
     try {
+        
         const data = await pdfParse(buffer);
         console.log(file);
         const rows = data.text.split('\n');
