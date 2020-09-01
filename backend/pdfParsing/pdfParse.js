@@ -4,21 +4,21 @@ const pdfParse = require('pdf-parse');
 // get all the file names from the allPdfResults folder
 const files = fs.readdirSync('/Users/avicohen/vs-sandbox/itst/backend/pdfParsing/allPdfResults');
 
-files.forEach(file => {
+files.slice(1).forEach(file => {
     let path = __dirname + '/allPdfResults/' + file;
-    console.log(path);
     const dataBuffer = fs.readFileSync(path);
     try {
-        parseResults(dataBuffer);
+        parseResults(dataBuffer, path);
     } catch (error) {
         console.log(error);
     }
 
 })
 
-async function parseResults(buffer) {
+async function parseResults(buffer,path) {
     try {
         const data = await pdfParse(buffer);
+        console.log(path);
         const rows = data.text.split('\n');
         const firstPlaceIndex = rows.findIndex((row, index) => row === '1' && rows[index + 5] === '2') // find the index of the first result
         const parsedResults = [];
