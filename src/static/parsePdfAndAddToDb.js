@@ -45,6 +45,7 @@ async function parseResults(buffer,file) {
             let generatedId = shortid.generate();
             swimmersArray.push({
                 id: generatedId,
+                gender: checkGender(rows[6]),
                 name: reverseString(rows[i + 1]),
                 yearOfBirth: rows[i + 2],
                 club: reverseString(rows[i + 3])
@@ -52,10 +53,11 @@ async function parseResults(buffer,file) {
 
             resultsArray.push({
                 swimmerId: generatedId,
-                event: file.slice(0,7),
+                event: rows[6].slice(13),
                 heat: rows[i + 4][0],
                 lane: rows[i + 4][1],
-                meet: rows[6].slice(12),
+                date: rows[5].slice(0,10),
+                meet: reverseString(rows[5].slice(37)),
                 time: isTimeValid(rows[i + 4])? rows[i + 4].slice(2, 10) : rows[i + 4].slice(2, 4),
                 internationalScore: isTimeValid(rows[i + 4])? rows[i + 4].slice(10) : '0'
             })
@@ -66,7 +68,6 @@ async function parseResults(buffer,file) {
 
         swimmerModel.create(swimmersArray);
         resultModel.create(resultsArray);
-        
     } catch (err) {
         console.log({ message: err });
     }
@@ -80,3 +81,12 @@ function reverseString(str) {
 function isTimeValid(row) {
     !['D', 'N'].includes(row[2]) ? true : false
 }
+
+function checkGender(row) {
+    if(row[9] === 'נ'){
+        return 'Female'
+    } else {
+        return 'Male'
+    }
+}
+

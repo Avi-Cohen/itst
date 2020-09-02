@@ -7,6 +7,7 @@ let resultSchema = new Schema({
     event: String,
     heat: String,
     lane: String,
+    date: String,
     meet: String,
     time: String,
     internationalScore: String

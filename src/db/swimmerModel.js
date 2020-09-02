@@ -4,6 +4,7 @@ var Schema = mongoose.Schema;
 
 var swimmerSchema = new Schema({
     id: String,
+    gender: String,
     name: String,
     yearOfBirth: String,
     club: String
