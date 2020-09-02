@@ -1,17 +1,17 @@
 const fs = require('fs');
 const pdfParse = require('pdf-parse');
 const config = require('./config');
-
-// get all the file names from the allPdfResults folder
-const files = fs.readdirSync(config.pathPdf);
+var swimmerModel = require('../db/swimmerModel');
+var resultModel = require('../db/resultModel');
+var mongoose = require('mongoose');
 const shortid = require('shortid');
 
 
 
 var getFileNames = (() => {
-    const files = fs.readdirSync('/Users/avicohen/vs-sandbox/itst/backend/pdfParsing/allPdfResults');
+    const files = fs.readdirSync('/Users/avicohen/vs-sandbox/itst/src/allPdfResults');
     files.slice(1).forEach(file => {
-        let path = __dirname + '/allPdfResults/' + file;
+        let path = __dirname + '/../allPdfResults/' + file;
         const dataBuffer = fs.readFileSync(path);
         try {
             parseResults(dataBuffer, file);
@@ -73,12 +73,15 @@ async function parseResults(buffer,file) {
                 )()
             })
         }
-        console.log(swimmersArray);
-        console.log(resultsArray);
-        
+        // console.log(swimmersArray);
+        // console.log(resultsArray);
+        mongoose.connect("mongodb+srv://Avi-Cohen:aBc&eF12@itst-db.32ui5.mongodb.net/itst-db?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true });
+
+        swimmerModel.create(swimmersArray);
+        resultModel.create(resultsArray);
+        return 'saved to DB';
     } catch (err) {
         console.log({ message: err });
-        return swimmersArray, resultsArray
     }
 }
 
