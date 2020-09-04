@@ -7,8 +7,7 @@ const mongoose = require('mongoose');
 const shortid = require('shortid');
 
 
-mongoose.connect(config.getDbConnectionString(), { useNewUrlParser: true, useUnifiedTopology: true });
-const parseEachFile = (() => {
+module.exports = function parseEachFile() {
     const files = fs.readdirSync(config.allPdfResults); // array of all file names 
     files.slice(1).forEach(file => {
         const path = __dirname + '/../allPdfResults/' + file;
@@ -19,7 +18,8 @@ const parseEachFile = (() => {
             console.log(error);
         }
     })
-})();
+    return ('done uploading to DB');
+};
 
 
 async function parseResults(buffer, file) {
@@ -73,7 +73,7 @@ async function parseResults(buffer, file) {
 
         }
         // console.log(swimmersArray);
-        // console.log(resultsArray);
+        console.log(resultsArray);
 
         swimmerModel.create(swimmersArray);
         resultModel.create(resultsArray);
@@ -119,5 +119,6 @@ function addTimeAndInternationalScore(res, row) {
         time = row.slice(2, 4);
         internationalScore = 0;
     }
-    return{...res, ...{time, internationalScore}};
+    return { ...res, ...{ time, internationalScore } };
 }
+
