@@ -7,7 +7,8 @@ var swimmerSchema = new Schema({
     gender: String,
     name: String,
     yearOfBirth: String,
-    club: String
+    club: String,
+    bestTimes: Object
 })
 
 let Swimmers = mongoose.model('Swimmers', swimmerSchema)

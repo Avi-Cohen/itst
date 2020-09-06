@@ -5,21 +5,30 @@ const swimmerModel = require('../db/swimmerModel');
 const resultModel = require('../db/resultModel');
 const mongoose = require('mongoose');
 const shortid = require('shortid');
+const _ = require('lodash');
 
+module.exports = {
+  parseEachFile  
+};
 
-module.exports = function parseEachFile() {
+// TODO
+
+// 1. Add personal best 
+// 2. check for personal best
+
+async function parseEachFile() {
     const files = fs.readdirSync(config.allPdfResults); // array of all file names 
-    files.slice(1).forEach(file => {
+    for (const file of files.slice(1)) {
         const path = __dirname + '/../allPdfResults/' + file;
         const dataBuffer = fs.readFileSync(path);
         try {
-            parseResults(dataBuffer, file);
+            await parseResults(dataBuffer, file);
         } catch (error) {
             console.log(error);
         }
-    })
+    }
     return ('done uploading to DB');
-};
+}
 
 
 async function parseResults(buffer, file) {
@@ -44,23 +53,28 @@ async function parseResults(buffer, file) {
 
         // in case there is more than 1 page -> Reindexing 
         for (let i = firstPlaceIndex; i < rows.length; i += 5) {
+            i = rows[i] != previousPosition + 1 ? i+3 : i; 
             currentPosition = rows[i];
-            if (currentPosition != previousPosition + 1) {
-                i += 3;
-                previousPosition++;
-                currentPosition = rows[i];
-            } else {
-                previousPosition++;
-            }
+            previousPosition++;
 
             const swimmerQuery = {
-                name: reverseString(rows[i + 1]),
+                name: reverseString(_.get(rows, [i + 1], `NAME Error-FILE-${file}-INDEX-${i}`)),
                 yearOfBirth: rows[i + 2],
-                club: reverseString(rows[i + 3]),
+                club: reverseString(_.get(rows, [i + 3], `CLUB Error-FILE-${file}-INDEX-${i}`)),
                 gender: eventInfo.gender
             }
 
             let swimmer = await swimmerModel.findOne(swimmerQuery); // check if swimmer already exists id DB
+
+            if (swimmer) {
+                const { swimmerId } = swimmer;
+                const time = convertToComparableResult(row.slice(2, 10));
+                const swimmerBestTime = convertToComparableResult(swimmer.bestTimes[eventInfo.eventName].time);
+                if (time < swimmerBestTime){
+                    // insert new best time to mongo here
+                    swimmerModel.update({ swimmerId }, getSwimmerBestTimeUpdateQuery(swimmerBestTime, eventInfo.eventName));
+                }
+            }      
 
             if (!swimmer) {
                 swimmer = { ...swimmerQuery, ...{ id: generateId() } };
@@ -75,12 +89,24 @@ async function parseResults(buffer, file) {
         // console.log(swimmersArray);
         console.log(resultsArray);
 
-        swimmerModel.create(swimmersArray);
-        resultModel.create(resultsArray);
+        await addDataToDb(swimmersArray, resultsArray);
+        // swimmerModel.create(swimmersArray);
+        // resultModel.create(resultsArray);
     } catch (err) {
         console.log({ message: err });
     }
 
+}
+
+function getSwimmerBestTimeUpdateQuery(swimmerBestTime, eventName) {
+    return {
+        [`bestTimes.${eventName}.displayTime`] : swimmerBestTime,
+        [`bestTimes.${eventName}.time`] : convertToComparableResult(swimmerBestTime)
+    };
+}
+
+function convertToComparableResult(result) {
+    // TODO
 }
 
 function reverseString(str) {
@@ -107,6 +133,28 @@ function generateResult(rows, i, swimmer, eventInfo) {
         meet: meetName
     }
     return addTimeAndInternationalScore(res, rows[i + 4]);
+}
+
+// function addSwimmersToDb(swimmersArray) {
+//     return swimmerModel.create(swimmersArray, (err, res) => {
+//         if (err) throw err;
+//         console.log(`Added new swimmers: ${res.map(swimmer=>swimmer.name).join(', ')}`);
+//         return res;
+//     });
+// }
+
+// function addResultsToDb(resultsArray) {
+//     return resultModel.create(resultsArray);
+// }
+
+async function addDataToDb(swimmersArray, resultsArray) {
+    const promises = [
+        swimmerModel.create(swimmersArray),
+        resultModel.create(resultsArray)
+    ];
+    const [swimmers, results] = await Promise.all(promises);
+    console.log(`${_.get(swimmers, 'length') ? `swimmers: ${swimmers.map(swimmer => swimmer.name).join(', ')}` : 'No new swimmers recorded'}`);
+    console.log(`${_.get(results, 'length') ? `results: ${results.map(result => result.time).join(', ')}`: 'No results'}`);
 }
 
 function addTimeAndInternationalScore(res, row) {
