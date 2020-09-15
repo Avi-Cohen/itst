@@ -45,8 +45,8 @@ async function parseResults(buffer, file) {
 
         const eventInfo = {
             meetName: reverseString(rows[5].slice(37)),
-            eventName: file.slice(0,6),
-            gender: getGender(file.slice(7,8)),
+            eventName: file.slice(0, 6),
+            gender: getGender(file.slice(7, 8)),
             date: rows[5].slice(0, 10)
 
         }
@@ -89,8 +89,21 @@ async function parseResults(buffer, file) {
                 swimmer = { ...swimmerQuery, ...{ id: generateId(), bestTimes: {} } };
                 swimmersArray.push(swimmer);
             }
-            const result = generateResult(rows, i, swimmer, eventInfo);
-            resultsArray.push(result);
+
+            const resultQuery = {
+                swimmerId: swimmer.id,
+                event: eventInfo.eventName,
+                heat: rows[i + 4][0],
+                lane: rows[i + 4][1],
+                date: eventInfo.date,
+                meet: eventInfo.meetName
+            }
+
+            let result = await resultModel.findOne(resultQuery); // check if result already exists id DB
+            if (!result) {
+                const result = generateResult(rows, i, swimmer, eventInfo);
+                resultsArray.push(result);
+            }
         }
         await addDataToDb(swimmersArray, resultsArray);
     } catch (err) {
