@@ -101,7 +101,7 @@ async function parseResults(buffer, file) {
 
             let result = await resultModel.findOne(resultQuery); // check if result already exists id DB
             if (!result) {
-                const result = generateResult(rows, i, swimmer, eventInfo);
+                const result = generateResult(rows[i + 4], resultQuery);
                 resultsArray.push(result);
             }
         }
@@ -134,18 +134,18 @@ function generateId() {
     return shortid.generate();
 }
 
-function generateResult(rows, i, swimmer, eventInfo) {
-    const { id: swimmerId } = swimmer;
-    const { meetName, eventName, date } = eventInfo;
-    let res = {
-        swimmerId,
-        event: eventName,
-        heat: rows[i + 4][0],
-        lane: rows[i + 4][1],
-        date,
-        meet: meetName
+function generateResult(row, resultQuery) {
+    let time;
+    let internationalScore;
+    if (!['D', 'N'].includes(row[2])) {
+        time = row.slice(2, 10);
+        internationalScore = Number(row.slice(10));
+    } else {
+        time = row.slice(2, 4);
+        internationalScore = 0;
     }
-    return addTimeAndInternationalScore(res, rows[i + 4]);
+    return { ...resultQuery, ...{ time, internationalScore } };
+    // return addTimeAndInternationalScore(resultQuery, rows[i + 4]);
 }
 
 async function addDataToDb(swimmersArray, resultsArray) {
