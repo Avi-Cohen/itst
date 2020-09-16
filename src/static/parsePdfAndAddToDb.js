@@ -157,17 +157,3 @@ async function addDataToDb(swimmersArray, resultsArray) {
     console.log(`${_.get(swimmers, 'length') ? `swimmers: ${swimmers.map(swimmer => swimmer.name).join(', ')}` : 'No new swimmers recorded'}`);
     console.log(`${_.get(results, 'length') ? `results: ${results.map(result => result.time).join(', ')}` : 'No results'}`);
 }
-
-function addTimeAndInternationalScore(res, row) {
-    let time;
-    let internationalScore;
-    if (!['D', 'N'].includes(row[2])) {
-        time = row.slice(2, 10);
-        internationalScore = Number(row.slice(10));
-    } else {
-        time = row.slice(2, 4);
-        internationalScore = 0;
-    }
-    return { ...res, ...{ time, internationalScore } };
-}
-
