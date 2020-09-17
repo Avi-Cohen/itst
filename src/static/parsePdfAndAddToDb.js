@@ -47,8 +47,8 @@ async function parseResults(buffer, file) {
             meetName: reverseString(rows[5].slice(37)),
             eventName: file.slice(0, 6),
             gender: getGender(file.slice(7, 8)),
-            date: rows[5].slice(0, 10)
-
+            date: rows[5].slice(0, 10),
+            course: 'SCM'
         }
 
         // in case there is more than 1 page -> Reindexing 
@@ -76,27 +76,42 @@ async function parseResults(buffer, file) {
             let swimmer = await swimmerModel.findOne(swimmerQuery); // check if swimmer already exists id DB
 
             if (swimmer) {
-                const { swimmerId } = swimmer;
+                const  swimmerId  = swimmer.id;
                 const time = convertToComparableResult(rows[i + 4].slice(2, 10));
+                
                 // TODO below
-                // const swimmerBestTime = convertToComparableResult(swimmer.bestTimes[eventInfo.eventName].time);
-                // if (!swimmer.bestTimes[eventInfo.eventName] || time < swimmerBestTime){
-                //     // insert new best time to mongo here
-                //     swimmerModel.update({ swimmerId }, getSwimmerBestTimeUpdateQuery(swimmerBestTime, eventInfo.eventName));
-                // }
+                const swimmerBestTime = convertToComparableResult(swimmer.bestTimes[eventInfo.eventName].displayTime);
+                console.log(swimmerBestTime)
+                if (swimmer.bestTimes[eventInfo.eventName].time === 0 || time < swimmerBestTime){
+                    // insert new best time to mongo here
+                    await swimmerModel.updateOne({ id:swimmerId }, getSwimmerBestTimeUpdateQuery(time, eventInfo.eventName, rows[i+4]),
+                    function (err, docs) { 
+                        if (err){ 
+                            console.log(err) 
+                        } 
+                        else{ 
+                            console.log("Updated Docs : ", docs); 
+                        }
+                    } );
+                }
             }
             if (!swimmer) {
-                swimmer = { ...swimmerQuery, ...{ id: generateId(), bestTimes: {} } };
+                swimmer = { ...swimmerQuery, ...{ id: generateId(), bestTimes: events } };
                 swimmersArray.push(swimmer);
             }
 
+            const {course} = eventInfo;
+            const {date} = eventInfo;
+            const {eventName} = eventInfo
+            
             const resultQuery = {
                 swimmerId: swimmer.id,
-                event: eventInfo.eventName,
+                eventName,
                 heat: rows[i + 4][0],
                 lane: rows[i + 4][1],
-                date: eventInfo.date,
-                meet: eventInfo.meetName
+                date,
+                meet: eventInfo.meetName,
+                course
             }
 
             let result = await resultModel.findOne(resultQuery); // check if result already exists id DB
@@ -111,10 +126,10 @@ async function parseResults(buffer, file) {
     }
 }
 
-function getSwimmerBestTimeUpdateQuery(swimmerBestTime, eventName) {
+function getSwimmerBestTimeUpdateQuery(time, eventName, row) {
     return {
-        [`bestTimes.${eventName}.displayTime`]: swimmerBestTime,
-        [`bestTimes.${eventName}.time`]: convertToComparableResult(swimmerBestTime)
+        [`bestTimes.${eventName}.displayTime`]: row.slice(2, 10),
+        [`bestTimes.${eventName}.time`]: time
     };
 }
 
@@ -156,4 +171,80 @@ async function addDataToDb(swimmersArray, resultsArray) {
     const [swimmers, results] = await Promise.all(promises);
     console.log(`${_.get(swimmers, 'length') ? `swimmers: ${swimmers.map(swimmer => swimmer.name).join(', ')}` : 'No new swimmers recorded'}`);
     console.log(`${_.get(results, 'length') ? `results: ${results.map(result => result.time).join(', ')}` : 'No results'}`);
+}
+
+
+const events = {
+'0050FL': {
+    displayTime:'',
+    time: 0
+        },
+'0100FL': {
+    displayTime:' ',
+    time: 0
+        },
+'0200FL': {
+    displayTime:' ',
+    time: 0
+        },
+'0050BA': {
+    displayTime:' ',
+    time: 0
+        },
+'0100BA': {
+    displayTime:' ',
+    time: 0
+        },
+'0200BA': {
+    displayTime:' ',
+    time: 0
+        },
+'0050BR': {
+    displayTime:' ',
+    time: 0
+        },
+'0100BR': {
+    displayTime:' ',
+    time: 0
+        },
+'0200BR': {
+    displayTime:' ',
+    time: 0
+        },
+'0050FR': {
+    displayTime:' ',
+    time: 0
+        },
+'0100FR': {
+    displayTime:' ',
+    time: 0
+        },
+'0200FR': {
+    displayTime:' ',
+    time: 0
+        },
+'0400FR': {
+    displayTime:' ',
+    time: 0
+        },
+'0800FR': {
+    displayTime:' ',
+    time: 0
+        },
+'1500FR': {
+    displayTime:' ',
+    time: 0
+        },
+'0100IM': {
+    displayTime:' ',
+    time: 0
+        },
+'0200IM': {
+    displayTime:' ',
+    time: 0
+        },
+'0400IM': {
+    displayTime:' ',
+    time: 0
+        }
 }
