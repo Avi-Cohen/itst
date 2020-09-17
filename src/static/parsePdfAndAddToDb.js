@@ -81,7 +81,7 @@ async function parseResults(buffer, file) {
                 
                 // TODO below
                 const swimmerBestTime = convertToComparableResult(swimmer.bestTimes[eventInfo.eventName].displayTime);
-                console.log(swimmerBestTime)
+                //console.log(swimmerBestTime)
                 if (swimmer.bestTimes[eventInfo.eventName].time === 0 || time < swimmerBestTime){
                     // insert new best time to mongo here
                     await swimmerModel.updateOne({ id:swimmerId }, getSwimmerBestTimeUpdateQuery(time, eventInfo.eventName, rows[i+4]),
@@ -89,9 +89,9 @@ async function parseResults(buffer, file) {
                         if (err){ 
                             console.log(err) 
                         } 
-                        else{ 
-                            console.log("Updated Docs : ", docs); 
-                        }
+                        // else{ 
+                        //     console.log("Updated Docs : ", docs); 
+                        // }
                     } );
                 }
             }

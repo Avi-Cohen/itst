@@ -10,7 +10,9 @@ let resultSchema = new Schema({
     date: String,
     meet: String,
     time: String,
-    internationalScore: String
+    internationalScore: String,
+    course: String,
+    eventName: String
 });
 
 var Results = mongoose.model('Results', resultSchema);
