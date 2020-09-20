@@ -1,8 +1,8 @@
 const fs = require('fs');
 const pdfParse = require('pdf-parse');
 const config = require('../config');
-const swimmerModel = require('../db/swimmerModel');
-const resultModel = require('../db/resultModel');
+const swimmerModel = require('../dbModels/swimmerModel');
+const resultModel = require('../dbModels/resultModel');
 const mongoose = require('mongoose');
 const shortid = require('shortid');
 const _ = require('lodash');
@@ -76,23 +76,23 @@ async function parseResults(buffer, file) {
             let swimmer = await swimmerModel.findOne(swimmerQuery); // check if swimmer already exists id DB
 
             if (swimmer) {
-                const  swimmerId  = swimmer.id;
+                const swimmerId = swimmer.id;
                 const time = convertToComparableResult(rows[i + 4].slice(2, 10));
-                
+
                 // TODO below
                 const swimmerBestTime = convertToComparableResult(swimmer.bestTimes[eventInfo.eventName].displayTime);
                 //console.log(swimmerBestTime)
-                if (swimmer.bestTimes[eventInfo.eventName].time === 0 || time < swimmerBestTime){
+                if (swimmer.bestTimes[eventInfo.eventName].time === 0 || time < swimmerBestTime) {
                     // insert new best time to mongo here
-                    await swimmerModel.updateOne({ id:swimmerId }, getSwimmerBestTimeUpdateQuery(time, eventInfo.eventName, rows[i+4]),
-                    function (err, docs) { 
-                        if (err){ 
-                            console.log(err) 
-                        } 
-                        // else{ 
-                        //     console.log("Updated Docs : ", docs); 
-                        // }
-                    } );
+                    await swimmerModel.updateOne({ id: swimmerId }, getSwimmerBestTimeUpdateQuery(time, eventInfo.eventName, rows[i + 4]),
+                        function (err, docs) {
+                            if (err) {
+                                console.log(err)
+                            }
+                            // else{ 
+                            //     console.log("Updated Docs : ", docs); 
+                            // }
+                        });
                 }
             }
             if (!swimmer) {
@@ -100,10 +100,11 @@ async function parseResults(buffer, file) {
                 swimmersArray.push(swimmer);
             }
 
-            const {course} = eventInfo;
-            const {date} = eventInfo;
-            const {eventName} = eventInfo
-            
+            const { course } = eventInfo;
+            const { date } = eventInfo;
+            const { eventName } = eventInfo;
+            const { gender } = eventInfo;
+
             const resultQuery = {
                 swimmerId: swimmer.id,
                 eventName,
@@ -111,7 +112,8 @@ async function parseResults(buffer, file) {
                 lane: rows[i + 4][1],
                 date,
                 meet: eventInfo.meetName,
-                course
+                course,
+                gender
             }
 
             let result = await resultModel.findOne(resultQuery); // check if result already exists id DB
@@ -175,76 +177,76 @@ async function addDataToDb(swimmersArray, resultsArray) {
 
 
 const events = {
-'0050FL': {
-    displayTime:'',
-    time: 0
-        },
-'0100FL': {
-    displayTime:' ',
-    time: 0
-        },
-'0200FL': {
-    displayTime:' ',
-    time: 0
-        },
-'0050BA': {
-    displayTime:' ',
-    time: 0
-        },
-'0100BA': {
-    displayTime:' ',
-    time: 0
-        },
-'0200BA': {
-    displayTime:' ',
-    time: 0
-        },
-'0050BR': {
-    displayTime:' ',
-    time: 0
-        },
-'0100BR': {
-    displayTime:' ',
-    time: 0
-        },
-'0200BR': {
-    displayTime:' ',
-    time: 0
-        },
-'0050FR': {
-    displayTime:' ',
-    time: 0
-        },
-'0100FR': {
-    displayTime:' ',
-    time: 0
-        },
-'0200FR': {
-    displayTime:' ',
-    time: 0
-        },
-'0400FR': {
-    displayTime:' ',
-    time: 0
-        },
-'0800FR': {
-    displayTime:' ',
-    time: 0
-        },
-'1500FR': {
-    displayTime:' ',
-    time: 0
-        },
-'0100IM': {
-    displayTime:' ',
-    time: 0
-        },
-'0200IM': {
-    displayTime:' ',
-    time: 0
-        },
-'0400IM': {
-    displayTime:' ',
-    time: 0
-        }
+    '0050FL': {
+        displayTime: '',
+        time: 0
+    },
+    '0100FL': {
+        displayTime: ' ',
+        time: 0
+    },
+    '0200FL': {
+        displayTime: ' ',
+        time: 0
+    },
+    '0050BA': {
+        displayTime: ' ',
+        time: 0
+    },
+    '0100BA': {
+        displayTime: ' ',
+        time: 0
+    },
+    '0200BA': {
+        displayTime: ' ',
+        time: 0
+    },
+    '0050BR': {
+        displayTime: ' ',
+        time: 0
+    },
+    '0100BR': {
+        displayTime: ' ',
+        time: 0
+    },
+    '0200BR': {
+        displayTime: ' ',
+        time: 0
+    },
+    '0050FR': {
+        displayTime: ' ',
+        time: 0
+    },
+    '0100FR': {
+        displayTime: ' ',
+        time: 0
+    },
+    '0200FR': {
+        displayTime: ' ',
+        time: 0
+    },
+    '0400FR': {
+        displayTime: ' ',
+        time: 0
+    },
+    '0800FR': {
+        displayTime: ' ',
+        time: 0
+    },
+    '1500FR': {
+        displayTime: ' ',
+        time: 0
+    },
+    '0100IM': {
+        displayTime: ' ',
+        time: 0
+    },
+    '0200IM': {
+        displayTime: ' ',
+        time: 0
+    },
+    '0400IM': {
+        displayTime: ' ',
+        time: 0
+    }
 }
